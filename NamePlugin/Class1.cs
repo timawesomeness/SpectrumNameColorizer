@@ -19,9 +19,7 @@ namespace NamePlugin {
         public void Initialize(IManager manager) {
             FileSystem fs = new FileSystem(typeof(Entry));
             try {
-                System.IO.StreamReader sr = new System.IO.StreamReader(fs.OpenFile("name.txt"));
-                colorData = new float[] { Convert.ToSingle(sr.ReadLine().Split(new string[] { "hue start: " }, StringSplitOptions.None)[1]) / 360f, Convert.ToSingle(sr.ReadLine().Split(new string[] { "hue end: " }, StringSplitOptions.None)[1]) / 360f, Convert.ToSingle(sr.ReadLine().Split(new string[] { "saturation: " }, StringSplitOptions.None)[1]) / 100, Convert.ToSingle(sr.ReadLine().Split(new string[] { "value: " }, StringSplitOptions.None)[1]) / 100 };
-                sr.Dispose();
+                LoadColors(fs);
             } catch (Exception ex) {
                 fs.CreateFile("name.txt");
                 System.IO.StreamWriter sw = new System.IO.StreamWriter(fs.OpenFile("name.txt"));
@@ -49,6 +47,16 @@ namespace NamePlugin {
             Events.Network.DisconnectedFromServer.Subscribe(data => {
                 alreadySet = false;
             });
+            Spectrum.API.Game.Network.Chat.MessageSent += (sender, args) => {
+                if (args.Author == username && args.Message.Contains("!updatename"))
+                    LoadColors(fs);
+            };
+        }
+
+        private void LoadColors(FileSystem fs) {
+            System.IO.StreamReader sr = new System.IO.StreamReader(fs.OpenFile("name.txt"));
+            colorData = new float[] { Convert.ToSingle(sr.ReadLine().Split(new string[] { "hue start: " }, StringSplitOptions.None)[1]) / 360f, Convert.ToSingle(sr.ReadLine().Split(new string[] { "hue end: " }, StringSplitOptions.None)[1]) / 360f, Convert.ToSingle(sr.ReadLine().Split(new string[] { "saturation: " }, StringSplitOptions.None)[1]) / 100, Convert.ToSingle(sr.ReadLine().Split(new string[] { "value: " }, StringSplitOptions.None)[1]) / 100 };
+            sr.Dispose();
         }
 
         private void UpdateName() {
