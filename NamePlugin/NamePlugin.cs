@@ -1,9 +1,8 @@
-﻿using System;
-using Spectrum.API;
+﻿using Spectrum.API;
+using Spectrum.API.Configuration;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
-using Spectrum.API.Configuration;
-using System.Collections.Generic;
+
 
 namespace NamePlugin {
     public class Entry : IPlugin {
